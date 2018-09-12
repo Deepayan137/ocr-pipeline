@@ -39,3 +39,9 @@ python ocr.py batch_ocr -p path/to/directory -l language/
 ```
 
 The above code will create a folder, Prediction inside which there will be recognized text in the form of text files with names corresponding to the image name.
+
+## pretrained models
+
+You will need to download pretrained model.
+you can download them from [here](https://drive.google.com/open?id=1e4ukpAewCqmAK7eb6vuBxlM6uXXywV5b)
+unzip them and store it in a dir named models inside your ocr-pipeline dir.
