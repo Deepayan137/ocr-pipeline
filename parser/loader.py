@@ -6,16 +6,20 @@ from tqdm import *
 import re
 def image_prep(image_path):
 	image = cv2.imread(image_path)
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	ret, thresh1 = cv2.threshold(gray, 0, 1, cv2.THRESH_OTSU)
+	try:
+		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		ret, thresh1 = cv2.threshold(gray, 0, 1, cv2.THRESH_OTSU)
+	except Exception as e:
+		print(e)
+		return np.ones((4000, 3000), dtype='uint8')
 	return thresh1
 
 def parse_data(path):
 	file_paths = list(map(lambda f: path + f, os.listdir(path)))
 	file_paths = file_paths
 	def clean(base_name):
-		# return re.findall(r'\d+', base_name)[-1]
-		return base_name.split('.')[0] 
+		return '_'.join(re.findall(r'\d+', base_name))
+		# return base_name.split('.')[0] 
 
 	def read(text_file):
 		with open(text_file, 'r') as f:
@@ -52,7 +56,32 @@ def images_and_truths(image, plot):
 	croppedImages = list(map(extract_units, units))
 	unitImages = [resizeImage(croppedImages[i]) for i in range(len(croppedImages))]
 	return unitImages
+from collections import defaultdict
+from parser.segmentation import run_segmentation
 
+def read_book_v03(path):
+    book_path = os.path.join(path, 'PTIFF')
+    pages = defaultdict(list)
+    f = lambda x: book_path + '/'+ x
+    image_paths = list(map(f, os.listdir(book_path)))
+    for i, image_path in enumerate(image_paths):
+        imagename=image_path.split('/')[-1]
+        try:
+            # print('{} page {}'.format(book, i))
+            if image_path.endswith('.jpeg'):
+	            plot = run_segmentation(image_path)
+	            image = cv2.imread(image_path)
+	            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	            ret, thresh1 = cv2.threshold(gray, 0, 1, cv2.THRESH_OTSU)
+	            croppedImages = images_and_truths(thresh1, plot)
+	            pages[imagename]=croppedImages
+        except Exception as e:
+            text = '{} page {}'.format(image_path, i)
+            with open('debug.txt', 'a') as f:
+                f.write(text)
+
+            pass
+    return pages
 def read_book(**kwargs):
 	Images = []
 	book_path = kwargs["book_path"]
@@ -60,8 +89,7 @@ def read_book(**kwargs):
 	folder_paths = map(dirs, ['Images/', 'Segmentations/'])
 	images, plots = list(map(parse_data, folder_paths))
 	keys = [key for key in images.keys()]
-	pdb.set_trace()
-	pbar = tqdm(keys[:10])
+	pbar = tqdm(keys)
 	for key in pbar:	
 		try:
 			pbar.set_description("Processing %s" % key)

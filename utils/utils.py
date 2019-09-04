@@ -12,8 +12,11 @@ def outdir(*names):
 
 
 def gmkdir(path):
+    flag = False
     if not os.path.exists(path):
         os.makedirs(path)
+        flag = True
+    return flag
     
 
 def cer(predictions, truths):
@@ -56,6 +59,7 @@ def gpu_format(sequence):
 def get_prediction(prediction, vocab):
     lmap, ilmap = vocab['v2i'], vocab['i2v']
     decoder  = Decoder(lmap, ilmap)
+    
     prediction =  decoder.decode(prediction)
     return prediction
 

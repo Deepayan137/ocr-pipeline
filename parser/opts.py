@@ -22,6 +22,8 @@ class Config:
     nclasses_hindi = 197
     depth = 3
     type_ = 'CRNN'
+    dest = '/ssd_scratch/cvit/deep/NDLI_Predictions/'
+    save_file='models/Hindi_CRNN.tar'
     # visualization
     plot_every = 40  # vis every N iter
 

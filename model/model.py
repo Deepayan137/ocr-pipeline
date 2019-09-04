@@ -79,7 +79,7 @@ class STN(nn.Module):
            
 class CRNN(nn.Module):
 
-    def __init__(self, imgH, imgW, nc, nclass, nh, stn_flag=False, n_rnn=2, leakyRelu=False):
+    def __init__(self, imgH, nc, nclass, nh, stn_flag=False, n_rnn=2, leakyRelu=False):
         super(CRNN, self).__init__()
         assert imgH % 16 == 0, 'imgH has to be a multiple of 16'
 
@@ -116,9 +116,9 @@ class CRNN(nn.Module):
         cnn.add_module('pooling{0}'.format(3),
                        nn.MaxPool2d((2, 2), (2, 1), (0, 1)))  # 512x2x16
         convRelu(6, True)  # 512x1x16
-        self.stn_flag = stn_flag
-        if stn_flag:
-            self.stn = STN(imgH, imgW)
+        # self.stn_flag = stn_flag
+        # if stn_flag:
+        #     self.stn = STN(imgH, imgW)
         self.cnn = cnn
         self.rnn = nn.Sequential(
             BidirectionalLSTM(512, nh, nh),
@@ -126,8 +126,8 @@ class CRNN(nn.Module):
 
     def forward(self, input):
         # conv features
-        if self.stn_flag:
-            input = self.stn(input)
+        # if self.stn_flag:
+        #     input = self.stn(input)
         conv = self.cnn(input)
         b, c, h, w = conv.size()
         assert h == 1, "the height of conv must be 1"
