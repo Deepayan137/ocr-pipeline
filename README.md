@@ -37,10 +37,10 @@ the co-ordinates of bounding box for each line in 4 seperate columns (x_top, y_t
 ## To run the code
 
 ```
-python ocr.py batch_ocr --path path/to/directory --lang language/
+python ocr_multib.py batch_ocr --path=path/to/directory --lang=language/ --save_file=/path/to/saved/model 
 ```
 
-The above code will create a folder, Prediction inside which there will be recognized text in the form of text files with names corresponding to the image name.
+The above code will create a folder, Predictions_CRNN inside which there will be recognized text in the form of text files with names corresponding to the image name.
 
 ## pretrained models
 
